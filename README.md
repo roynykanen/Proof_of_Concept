@@ -7,13 +7,13 @@
 
 ## What it does
 
-A Python script that pulls data from GA4, Google Ads, Meta Ads Manager, and Klaviyo, then uses Claude to write:
+An AI agent that pulls data from GA4, Google Ads, Meta Ads Manager, and Klaviyo, then uses Claude to write:
 
 - A channel-by-channel performance analysis with verdict + anomaly flag
 - An automated anomaly scan across all channels
-- A 3-sentence CEO-level executive summary with one clear priority
+- A 3-sentence CEO-level executive summary with one clear priority for next month
 
-Output is a Markdown report that drops straight into Google Sheets or a Slack message. The script runs on a GitHub Actions cron on the 1st of each month and pings Slack when the draft is ready.
+Output is a formatted Markdown report. A Next.js web UI lets you generate and view the report in the browser — deployable to Vercel in one click.
 
 **See [`sample_report.md`](sample_report.md) for exactly what it produces.**
 
@@ -21,9 +21,9 @@ Output is a Markdown report that drops straight into Google Sheets or a Slack me
 
 ## Why this opportunity
 
-Hanna spends 2 days per month copying numbers into slides. That's 24 days a year of mechanical work that produces a document Arttu needs for decisions — but the 2-day lag means the data is already stale when it arrives. This tool cuts generation time to ~3 minutes and makes mid-month reports possible.
+Hanna spends 2 days per month copying numbers into slides. That is 24 days a year of mechanical work — and the 2-day lag means the data is stale before Arttu sees it. This tool cuts generation time to ~3 minutes and makes mid-month reports possible.
 
-The AI component is not just "write code" — Claude is reading the numbers and forming an opinion: which channel underperformed, which anomaly needs attention, what the single priority for next month should be. That's the core value.
+Claude is not just writing code here — it is reading the numbers and forming opinions: which channel underperformed, which anomaly needs attention, what the single priority for next month should be. That is the core value.
 
 ---
 
@@ -31,39 +31,51 @@ The AI component is not just "write code" — Claude is reading the numbers and 
 
 | Tool | Role |
 |------|------|
-| **Claude API (claude-sonnet-4-6)** | Commentary generation, anomaly detection, CEO narrative |
-| **Python 3.12** | Orchestration, API calls, output formatting |
-| **GitHub Actions** | Monthly cron scheduler, zero-infrastructure deploy |
-| **Slack Webhooks** | Notification when report is ready |
-
-Real API connectors (GA4 Data API, Google Ads API, Meta Marketing API, Klaviyo API) slot in as drop-in replacements for the mock data functions in `pohjoinen_report/mock_data.py`.
+| **Claude API** | Commentary generation, anomaly detection, CEO narrative |
+| **Python 3.12** | CLI script, data orchestration |
+| **Next.js 14** | Web UI with streaming progress |
+| **Vercel** | One-click deploy for the UI |
+| **GitHub Actions** | Monthly cron scheduler (optional) |
+| **Slack Webhooks** | Notification when report is ready (optional) |
 
 ---
 
-## How to run
+## Quick start — CLI (demo mode, no API key needed)
 
 ```bash
-# 1. Clone and install
-git clone https://github.com/roynykanen/proof_of_concept
-cd proof_of_concept
+git clone https://github.com/roynykanen/Proof_of_Concept
+cd Proof_of_Concept
 pip install -r requirements.txt
 
-# 2. Set your API key
+python run_report.py --demo
+```
+
+## Quick start — with a real API key
+
+```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-
-# 3. Run with mock data (works immediately, no other credentials needed)
-python run_report.py
-
-# Save to file
-python run_report.py --output report.md
-
-# English output
-python run_report.py --lang en
-
-# With Slack notification
-export SLACK_WEBHOOK_URL=https://hooks.slack.com/...
 python run_report.py --output report.md
 ```
+
+## Quick start — Web UI
+
+```bash
+cd ui
+npm install
+npm run dev
+# open http://localhost:3000
+```
+
+Toggle **Demo mode** off and add your `ANTHROPIC_API_KEY` to use live Claude calls.
+
+---
+
+## Deploy to Vercel
+
+1. Go to [vercel.com](https://vercel.com) → New Project → import this repo
+2. Set **Root Directory** to `ui`
+3. Deploy — demo mode works immediately, no env vars needed
+4. To enable live mode: add `ANTHROPIC_API_KEY` in Vercel project settings → Environment Variables
 
 ---
 
@@ -71,37 +83,38 @@ python run_report.py --output report.md
 
 ```
 .
-├── run_report.py                  # Entry point
+├── run_report.py                  # CLI entry point
 ├── requirements.txt
 ├── sample_report.md               # Pre-generated example output
 ├── pohjoinen_report/
-│   ├── mock_data.py               # Realistic mock data (replace with real APIs)
+│   ├── mock_data.py               # Mock data (replace with real API calls)
 │   └── prompts.py                 # Claude prompt templates
-└── .github/
-    └── workflows/
-        └── monthly_report.yml     # GitHub Actions cron (runs 1st of each month)
+└── ui/
+    ├── app/
+    │   ├── page.tsx               # Web UI
+    │   └── api/report/route.ts    # Streaming API route (calls Claude)
+    ├── package.json
+    └── next.config.js
 ```
 
 ---
 
 ## Wiring up real APIs
 
-Each function in `pohjoinen_report/mock_data.py` is a standalone data source. Replace the mock return value with a real API call:
+Each function in `pohjoinen_report/mock_data.py` is a standalone data source. Replace the mock return value with a real API call — no other changes needed:
 
 | Function | Real API |
 |----------|----------|
-| `get_ga4_data()` | [GA4 Data API](https://developers.google.com/analytics/devguides/reporting/data/v1) via `google-analytics-data` |
-| `get_google_ads_data()` | [Google Ads API](https://developers.google.com/google-ads/api) via `google-ads` |
-| `get_meta_ads_data()` | [Meta Marketing API](https://developers.facebook.com/docs/marketing-apis) via `facebook-business` |
-| `get_klaviyo_data()` | [Klaviyo API v2024-02-15](https://developers.klaviyo.com) via `klaviyo-api` |
-
-Each returns the same dict shape the prompts expect — no other changes needed.
+| `get_ga4_data()` | GA4 Data API via `google-analytics-data` |
+| `get_google_ads_data()` | Google Ads API via `google-ads` |
+| `get_meta_ads_data()` | Meta Marketing API via `facebook-business` |
+| `get_klaviyo_data()` | Klaviyo API v2024-02-15 via `klaviyo-api` |
 
 ---
 
 ## What I'd build next
 
-1. **Google Sheets write-back** — push the summary table into Arttu's existing template via `gspread`, so the format Arttu already knows stays unchanged
-2. **Real API connectors** for GA4 and Klaviyo (these are the two most straightforward; ~1 day of work)
-3. **Trend detection** — feed Claude 3 months of data at once so it can call out directional shifts, not just MoM comparisons
-4. **Hanna's approval step** — a simple email with "Approve & send to Arttu" link using a minimal FastAPI endpoint, so the human stays in the loop before anything goes out
+1. **Real API connectors** for GA4 and Klaviyo — the two most straightforward (~1 day)
+2. **Hanna's approval step** — one-click email approval before the report reaches Arttu (FastAPI + Render free tier)
+3. **Trend detection** — feed Claude 3 months of history for directional callouts, not just MoM comparisons
+4. **Google Sheets write-back** — push the summary table into Arttu's existing template via `gspread`
