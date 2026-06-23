@@ -64,15 +64,6 @@ Toggle **Demo mode** off and add your `ANTHROPIC_API_KEY` to use live Claude cal
 
 ---
 
-## Deploy to Vercel
-
-1. Go to [vercel.com](https://vercel.com) → New Project → import this repo
-2. Set **Root Directory** to `ui`
-3. Deploy — demo mode works immediately, no env vars needed
-4. To enable live mode: add `ANTHROPIC_API_KEY` in Vercel project settings → Environment Variables
-
----
-
 ## Send the report to Slack
 
 The web UI has a **Send to Slack** button at the bottom of every generated report. It posts a formatted Block Kit message with the executive summary, key metrics, priority, and anomalies.
@@ -129,12 +120,3 @@ Each function in `pohjoinen_report/mock_data.py` is a standalone data source. Re
 | `get_google_ads_data()` | Google Ads API via `google-ads` |
 | `get_meta_ads_data()` | Meta Marketing API via `facebook-business` |
 | `get_klaviyo_data()` | Klaviyo API v2024-02-15 via `klaviyo-api` |
-
----
-
-## What I'd build next
-
-1. **Real API connectors** for GA4 and Klaviyo — the two most straightforward (~1 day)
-2. **Hanna's approval step** — one-click email approval before the report reaches Arttu (FastAPI + Render free tier)
-3. **Trend detection** — feed Claude 3 months of history for directional callouts, not just MoM comparisons
-4. **Google Sheets write-back** — push the summary table into Arttu's existing template via `gspread`
