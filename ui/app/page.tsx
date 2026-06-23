@@ -323,7 +323,7 @@ export default function Home() {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16">
                   <path d="M8 2v8m0 0l-3-3m3 3l3-3M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                Markdown
+                Download
               </button>
             </div>
           )}
