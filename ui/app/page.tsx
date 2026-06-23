@@ -226,12 +226,21 @@ export default function Home() {
             </div>
           </div>
           {report && (
-            <button onClick={downloadMarkdown} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16">
-                <path d="M8 2v8m0 0l-3-3m3 3l3-3M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Download .md
-            </button>
+            <div className="flex items-center gap-3" data-no-print>
+              <button onClick={() => window.print()} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16">
+                  <path d="M4 6V2h8v4M4 11H2V6h12v5h-2M4 9h8v5H4z" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                PDF
+              </button>
+              <span className="text-gray-200">|</span>
+              <button onClick={downloadMarkdown} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16">
+                  <path d="M8 2v8m0 0l-3-3m3 3l3-3M2 12v1a1 1 0 001 1h10a1 1 0 001-1v-1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Markdown
+              </button>
+            </div>
           )}
         </div>
       </header>
@@ -282,6 +291,7 @@ export default function Home() {
                 <p className="text-sm text-gray-400 mt-1">Generoitu {report.generated_at}{report.demo ? " · demo" : ""}</p>
               </div>
               <button
+                data-no-print
                 onClick={() => { setReport(null); setStatus("idle"); setSteps([]); }}
                 className="text-sm text-gray-400 hover:text-gray-600 transition-colors mt-1"
               >
@@ -290,7 +300,7 @@ export default function Home() {
             </div>
 
             {/* CEO summary */}
-            <div className="bg-blue-600 rounded-2xl p-7 text-white shadow-lg">
+            <div className="bg-blue-600 rounded-2xl p-7 text-white shadow-lg" data-print-summary>
               <p className="text-xs font-semibold uppercase tracking-widest text-blue-200 mb-3">Johdon yhteenveto</p>
               <p className="text-lg leading-relaxed font-medium">{report.ceo_summary}</p>
               <div className="mt-5 pt-5 border-t border-blue-500">
@@ -302,7 +312,7 @@ export default function Home() {
             {/* Metrics */}
             <div>
               <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Avainluvut</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4" data-metrics-grid>
                 {report.metrics.map((m) => <MetricCard key={m.label} m={m} />)}
               </div>
             </div>
@@ -318,7 +328,7 @@ export default function Home() {
             {/* Channels */}
             <div>
               <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Kanavat</h2>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-4" data-channels-grid>
                 {report.channels.map((c) => <ChannelCard key={c.name} c={c} />)}
               </div>
             </div>

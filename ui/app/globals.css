@@ -1,3 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media print {
+  /* Hide everything except the report */
+  header,
+  button,
+  [data-no-print] {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  main {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Avoid breaking cards across pages */
+  .print\:break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  /* Keep the blue CEO card readable in B&W print */
+  [data-print-summary] {
+    background: #1e40af !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Metric grid — 3 columns on print */
+  [data-metrics-grid] {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Channel grid — 2 columns on print */
+  [data-channels-grid] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  @page {
+    margin: 1.5cm 1.8cm;
+    size: A4;
+  }
+}
