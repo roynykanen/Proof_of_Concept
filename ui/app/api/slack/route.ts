@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { ReportData } from "../report/route";
 
+export async function GET() {
+  return NextResponse.json({ configured: !!process.env.SLACK_WEBHOOK_URL });
+}
+
 export async function POST(req: NextRequest) {
-  const { report, webhookUrl }: { report: ReportData; webhookUrl: string } = await req.json();
+  const { report, webhookUrl: clientUrl }: { report: ReportData; webhookUrl?: string } = await req.json();
+
+  // Prefer server-side env var — client URL is fallback for manual paste
+  const webhookUrl = process.env.SLACK_WEBHOOK_URL || clientUrl;
 
   if (!webhookUrl?.startsWith("https://hooks.slack.com/")) {
-    return NextResponse.json({ error: "Invalid Slack webhook URL" }, { status: 400 });
+    return NextResponse.json({ error: "No Slack webhook configured. Set SLACK_WEBHOOK_URL or paste a URL." }, { status: 400 });
   }
 
   const anomalyEmoji: Record<string, string> = {
