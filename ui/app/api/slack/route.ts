@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       type: "header",
       text: {
         type: "plain_text",
-        text: `📊 Pohjoinen — Kuukausiraportti ${report.period}`,
+        text: `📊 Pohjoinen — Monthly Report ${report.period}`,
       },
     },
     {
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       elements: [
         {
           type: "mrkdwn",
-          text: `Generoitu ${report.generated_at}${report.demo ? " · demo" : ""}`,
+          text: `Generated ${report.generated_at}${report.demo ? " · demo" : ""}`,
         },
       ],
     },
@@ -48,22 +48,14 @@ export async function POST(req: NextRequest) {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `*Johdon yhteenveto*\n${report.ceo_summary}`,
+        text: `*Executive Summary*\n${report.ceo_summary}`,
       },
     },
     {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `🎯 *Prioriteetti ensi kuulle*\n${report.ceo_priority}`,
-      },
-    },
-    { type: "divider" },
-    {
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `*Avainluvut*\n${metricLines}`,
+        text: `🎯 *Priority for next month*\n${report.ceo_priority}`,
       },
     },
     { type: "divider" },
@@ -71,7 +63,15 @@ export async function POST(req: NextRequest) {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `*Poikkeamat & riskit*\n${anomalyLines}`,
+        text: `*Key Metrics*\n${metricLines}`,
+      },
+    },
+    { type: "divider" },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `*Anomalies & Risks*\n${anomalyLines}`,
       },
     },
     { type: "divider" },

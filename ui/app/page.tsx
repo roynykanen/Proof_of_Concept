@@ -9,6 +9,70 @@ type SlackStatus = "idle" | "sending" | "sent" | "error";
 const STEPS = ["GA4", "Google Ads", "Meta Ads", "Klaviyo", "CEO narrative"];
 
 // ---------------------------------------------------------------------------
+// Brand logos
+// ---------------------------------------------------------------------------
+
+function GA4Logo({ size = 24 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="192" height="192" rx="20" fill="#E8710A"/>
+      <rect x="40" y="108" width="36" height="56" rx="6" fill="white"/>
+      <rect x="88" y="72" width="36" height="92" rx="6" fill="white"/>
+      <rect x="136" y="28" width="36" height="136" rx="6" fill="white"/>
+    </svg>
+  );
+}
+
+function GoogleAdsLogo({ size = 24 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="192" height="192" rx="20" fill="#1a73e8"/>
+      <circle cx="68" cy="116" r="28" fill="white"/>
+      <circle cx="68" cy="116" r="14" fill="#1a73e8"/>
+      <rect x="82" y="42" width="28" height="84" rx="14" transform="rotate(30 82 42)" fill="#fbbc04"/>
+      <rect x="106" y="90" width="28" height="56" rx="14" fill="#34a853"/>
+    </svg>
+  );
+}
+
+function MetaLogo({ size = 24 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="192" height="192" rx="20" fill="#0866FF"/>
+      <path
+        d="M20 100 C20 70 35 50 55 50 C75 50 85 68 96 84 C107 68 117 50 137 50 C157 50 172 70 172 100 C172 130 157 150 137 150 C117 150 107 132 96 116 C85 132 75 150 55 150 C35 150 20 130 20 100Z"
+        fill="white"
+      />
+      <path
+        d="M20 100 C20 70 35 50 55 50 C75 50 85 68 96 84 C107 68 117 50 137 50 C157 50 172 70 172 100 C172 130 157 150 137 150 C117 150 107 132 96 116 C85 132 75 150 55 150 C35 150 20 130 20 100Z"
+        fill="none"
+        stroke="#0866FF"
+        strokeWidth="18"
+      />
+    </svg>
+  );
+}
+
+function KlaviyoLogo({ size = 24 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="192" height="192" rx="20" fill="#1B1B1B"/>
+      <rect x="52" y="36" width="32" height="120" rx="6" fill="white"/>
+      <path d="M84 96 L84 36 L116 36 L152 96 L116 156 L84 156 L84 96Z" fill="#20C997"/>
+    </svg>
+  );
+}
+
+function ChannelLogo({ name, size = 28 }: { name: string; size?: number }) {
+  const n = name.toLowerCase();
+  if (n.includes("ga4") || n.includes("google analytics")) return <GA4Logo size={size} />;
+  if (n.includes("google ads")) return <GoogleAdsLogo size={size} />;
+  if (n.includes("meta")) return <MetaLogo size={size} />;
+  if (n.includes("klaviyo")) return <KlaviyoLogo size={size} />;
+  return <span className="text-xl">{name[0]}</span>;
+}
+
+// ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
 
@@ -51,21 +115,21 @@ function AnomalyCard({ a }: { a: Anomaly }) {
       border: "border-red-200",
       badge: "bg-red-100 text-red-700",
       dot: "bg-red-500",
-      label: "Riski — korkea",
+      label: "Risk — High",
     },
     "risk-low": {
       bg: "bg-amber-50",
       border: "border-amber-200",
       badge: "bg-amber-100 text-amber-700",
       dot: "bg-amber-500",
-      label: "Riski — seurattava",
+      label: "Risk — Monitor",
     },
     opportunity: {
       bg: "bg-emerald-50",
       border: "border-emerald-200",
       badge: "bg-emerald-100 text-emerald-700",
       dot: "bg-emerald-500",
-      label: "Mahdollisuus",
+      label: "Opportunity",
     },
   }[a.type];
 
@@ -91,8 +155,8 @@ function ChannelCard({ c }: { c: Channel }) {
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <span className="text-xl">{c.icon}</span>
+        <div className="flex items-center gap-3">
+          <ChannelLogo name={c.name} size={28} />
           <h3 className="font-semibold text-gray-900">{c.name}</h3>
         </div>
         <span
@@ -102,7 +166,7 @@ function ChannelCard({ c }: { c: Channel }) {
               : "bg-amber-50 text-amber-700"
           }`}
         >
-          {c.verdict_positive ? "✓ Positiivinen" : "⚠ Huomio"}
+          {c.verdict_positive ? "✓ Positive" : "⚠ Attention"}
         </span>
       </div>
 
@@ -113,7 +177,7 @@ function ChannelCard({ c }: { c: Channel }) {
 
       <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
         <p className="text-xs text-gray-500">
-          <span className="font-semibold text-gray-700">Huomioitavaa: </span>
+          <span className="font-semibold text-gray-700">Note: </span>
           {c.note}
         </p>
       </div>
@@ -164,15 +228,21 @@ export default function Home() {
   const [slackStatus, setSlackStatus] = useState<SlackStatus>("idle");
 
   async function sendToSlack() {
-    if (!report || !slackUrl) return;
+    if (!report) return;
     setSlackStatus("sending");
     const res = await fetch("/api/slack", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ report, webhookUrl: slackUrl }),
     });
-    setSlackStatus(res.ok ? "sent" : "error");
-    if (res.ok) setTimeout(() => setSlackStatus("idle"), 3000);
+    const data = await res.json();
+    if (res.ok) {
+      setSlackStatus("sent");
+      setTimeout(() => setSlackStatus("idle"), 3000);
+    } else {
+      setSlackStatus("error");
+      console.error(data.error);
+    }
   }
 
   async function generate() {
@@ -213,10 +283,10 @@ export default function Home() {
   function downloadMarkdown() {
     if (!report) return;
     const md = [
-      `# Pohjoinen — Kuukausiraportti ${report.period}`,
-      `_Generoitu ${report.generated_at}_\n`,
-      `## Johdon yhteenveto\n${report.ceo_summary}\n\n**Prioriteetti ensi kuulle:** ${report.ceo_priority}`,
-      report.channels.map((c) => `## ${c.name}\n**${c.verdict}**\n\n${c.body}\n\n_${c.note}_`).join("\n\n---\n\n"),
+      `# Pohjoinen — Monthly Report ${report.period}`,
+      `_Generated ${report.generated_at}_\n`,
+      `## Executive Summary\n${report.ceo_summary}\n\n**Priority for next month:** ${report.ceo_priority}`,
+      report.channels.map((c) => `## ${c.name}\n**${c.verdict}**\n\n${c.body}\n\n_Note: ${c.note}_`).join("\n\n---\n\n"),
     ].join("\n\n---\n\n");
     const blob = new Blob([md], { type: "text/markdown" });
     const a = document.createElement("a");
@@ -265,7 +335,7 @@ export default function Home() {
         {/* Generate panel */}
         {!report && (
           <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Kuukausiraportti</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">Monthly Report</h1>
             <p className="text-gray-500 mb-6">
               Pulls from GA4, Google Ads, Meta Ads, and Klaviyo — Claude writes the analysis.
             </p>
@@ -302,31 +372,31 @@ export default function Home() {
             {/* Report header */}
             <div className="flex items-start justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Kuukausiraportti {report.period}</h1>
-                <p className="text-sm text-gray-400 mt-1">Generoitu {report.generated_at}{report.demo ? " · demo" : ""}</p>
+                <h1 className="text-2xl font-bold text-gray-900">Monthly Report {report.period}</h1>
+                <p className="text-sm text-gray-400 mt-1">Generated {report.generated_at}{report.demo ? " · demo" : ""}</p>
               </div>
               <button
                 data-no-print
                 onClick={() => { setReport(null); setStatus("idle"); setSteps([]); }}
                 className="text-sm text-gray-400 hover:text-gray-600 transition-colors mt-1"
               >
-                ← Uusi raportti
+                ← New report
               </button>
             </div>
 
             {/* CEO summary */}
             <div className="bg-blue-600 rounded-2xl p-7 text-white shadow-lg" data-print-summary>
-              <p className="text-xs font-semibold uppercase tracking-widest text-blue-200 mb-3">Johdon yhteenveto</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-blue-200 mb-3">Executive Summary</p>
               <p className="text-lg leading-relaxed font-medium">{report.ceo_summary}</p>
               <div className="mt-5 pt-5 border-t border-blue-500">
-                <p className="text-xs font-semibold text-blue-200 uppercase tracking-widest mb-1">Prioriteetti ensi kuulle</p>
+                <p className="text-xs font-semibold text-blue-200 uppercase tracking-widest mb-1">Priority for next month</p>
                 <p className="text-white font-semibold">{report.ceo_priority}</p>
               </div>
             </div>
 
             {/* Metrics */}
             <div>
-              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Avainluvut</h2>
+              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Key Metrics</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4" data-metrics-grid>
                 {report.metrics.map((m) => <MetricCard key={m.label} m={m} />)}
               </div>
@@ -334,7 +404,7 @@ export default function Home() {
 
             {/* Anomalies */}
             <div>
-              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Poikkeamat & riskit</h2>
+              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Anomalies & Risks</h2>
               <div className="space-y-3">
                 {report.anomalies.map((a) => <AnomalyCard key={a.title} a={a} />)}
               </div>
@@ -342,7 +412,7 @@ export default function Home() {
 
             {/* Channels */}
             <div>
-              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Kanavat</h2>
+              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Channels</h2>
               <div className="grid md:grid-cols-2 gap-4" data-channels-grid>
                 {report.channels.map((c) => <ChannelCard key={c.name} c={c} />)}
               </div>
@@ -356,6 +426,7 @@ export default function Home() {
                 </svg>
                 <span className="text-sm font-medium text-gray-700">Send to Slack</span>
               </div>
+
               <input
                 type="url"
                 placeholder="https://hooks.slack.com/services/..."
@@ -363,6 +434,7 @@ export default function Home() {
                 onChange={(e) => { setSlackUrl(e.target.value); setSlackStatus("idle"); }}
                 className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full"
               />
+
               <button
                 onClick={sendToSlack}
                 disabled={!slackUrl || slackStatus === "sending" || slackStatus === "sent"}

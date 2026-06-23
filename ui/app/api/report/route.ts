@@ -68,8 +68,8 @@ const MOCK = {
     conversions: 387, conversions_prev: 301,
     top_campaigns: [
       { name: "Brand – Exact", spend: 1200, roas: 14.2, conversions: 98 },
-      { name: "Vaellus – Generic", spend: 3400, roas: 6.1, conversions: 142 },
-      { name: "Juoksu – Generic", spend: 2800, roas: 4.8, conversions: 89 },
+      { name: "Hiking – Generic", spend: 3400, roas: 6.1, conversions: 142 },
+      { name: "Running – Generic", spend: 2800, roas: 4.8, conversions: 89 },
       { name: "Retargeting", spend: 2440, roas: 3.9, conversions: 58 },
     ],
   },
@@ -89,10 +89,10 @@ const MOCK = {
     avg_open_rate: 28.4, avg_open_rate_prev: 26.1,
     avg_click_rate: 4.2, avg_click_rate_prev: 3.8,
     campaigns: [
-      { name: "Kevätalennus – kaikki", sent: 181000, open_rate: 24.1, revenue: 5200 },
-      { name: "Vaelluskengät – ostajat", sent: 12400, open_rate: 41.8, revenue: 11400 },
-      { name: "Teltat & retkeilytarvikkeet", sent: 38000, open_rate: 33.2, revenue: 8200 },
-      { name: "Win-back – 180 pv", sent: 14200, open_rate: 19.4, revenue: 3600 },
+      { name: "Spring Sale – All", sent: 181000, open_rate: 24.1, revenue: 5200 },
+      { name: "Hiking Boots – Buyers", sent: 12400, open_rate: 41.8, revenue: 11400 },
+      { name: "Tents & Camping Gear", sent: 38000, open_rate: 33.2, revenue: 8200 },
+      { name: "Win-back – 180d", sent: 14200, open_rate: 19.4, revenue: 3600 },
     ],
     flows_revenue: 9800,
   },
@@ -115,34 +115,34 @@ function buildDemoReport(demo: boolean): ReportData {
   return {
     period: d.period,
     prev_period: d.prev_period,
-    generated_at: new Date().toLocaleString("fi-FI", { timeZone: "Europe/Helsinki" }),
+    generated_at: new Date().toLocaleString("en-GB", { timeZone: "Europe/Helsinki" }),
     demo,
     ceo_summary:
-      "Toukokuu 2025 oli Pohjoisen vahvin kuukausi: seurattu liikevaihto nousi 18 % edelliskuusta €187 450:een, ja orgaaninen liikenne kasvoi 26 %, mikä osoittaa SEO-investointien alkaneen tuottaa. Suurin riski on Meta Interest -kohderyhmäsetti (ROAS 2,1), joka kuluttaa €1 540 lähes ilman tuottoa — sen budjetti pitää siirtää välittömästi Lookalike-yleisöihin. Kesäkuun prioriteetti: sammuta Meta Interest -setti ja ohjaa säästö Vaellus-hakukampanjoihin (ROAS 6,1).",
+      "May 2025 was Pohjoinen's strongest month on record: tracked revenue rose 18% MoM to €187,450 and organic traffic grew 26%, signalling that SEO investments are paying off. The single biggest risk is the Meta Interest audience (ROAS 2.1) burning €1,540 for only €3,234 in revenue — the same budget in Retargeting would yield ~€12,000. June priority: pause the Interest ad set and redirect its budget to the Hiking Search campaigns (ROAS 6.1).",
     ceo_priority:
-      "Siirrä Meta Interest -budjetti (€1 540) Lookalike 1 % -kohderyhmälle ja käynnistä Juoksukenkä-sähköpostiflow ostajasegmentille.",
+      "Reallocate Meta Interest budget (€1,540) to the Lookalike 1% audience and launch a Running Shoes post-purchase email flow for buyers.",
     metrics: [
-      { label: "Liikevaihto", value: "€187 450", prev: "€159 200", change: pct(d.ga4.revenue, d.ga4.revenue_prev), direction: "up", positive: true },
-      { label: "Sessiot", value: "48 320", prev: "41 100", change: pct(d.ga4.sessions, d.ga4.sessions_prev), direction: "up", positive: true },
-      { label: "Maksettu media", value: `€${totalSpend.toLocaleString("fi-FI")}`, prev: `€${prevSpend.toLocaleString("fi-FI")}`, change: pct(totalSpend, prevSpend), direction: "up", positive: false },
+      { label: "Revenue", value: "€187,450", prev: "€159,200", change: pct(d.ga4.revenue, d.ga4.revenue_prev), direction: "up", positive: true },
+      { label: "Sessions", value: "48,320", prev: "41,100", change: pct(d.ga4.sessions, d.ga4.sessions_prev), direction: "up", positive: true },
+      { label: "Paid media spend", value: `€${totalSpend.toLocaleString("en-GB")}`, prev: `€${prevSpend.toLocaleString("en-GB")}`, change: pct(totalSpend, prevSpend), direction: "up", positive: false },
       { label: "Blended ROAS", value: `${(d.ga4.revenue / totalSpend).toFixed(2)}x`, prev: "—", change: "", direction: "neutral", positive: true },
-      { label: "Sähköpostituotto", value: "€28 400", prev: "€21 600", change: pct(d.klaviyo.revenue_attributed, d.klaviyo.revenue_attributed_prev), direction: "up", positive: true },
-      { label: "Konversioprosentti", value: "2,57 %", prev: "2,64 %", change: "−0,07 pp", direction: "down", positive: false },
+      { label: "Email revenue", value: "€28,400", prev: "€21,600", change: pct(d.klaviyo.revenue_attributed, d.klaviyo.revenue_attributed_prev), direction: "up", positive: true },
+      { label: "Conversion rate", value: "2.57%", prev: "2.64%", change: "−0.07 pp", direction: "down", positive: false },
     ],
     anomalies: [
       {
-        title: "Meta Interest -kohderyhmä ROAS 2,1",
-        body: "€1 540 kulutuksella tuotettu €3 234 liikevaihto on selvästi alle tavoitteen. Sama budjetti Retargeting-setissä tuottaisi ~€12 000.",
+        title: "Meta Interest audience ROAS 2.1",
+        body: "€1,540 spend produced €3,234 revenue — well below target. The same budget in the Retargeting ad set would yield ~€12,000.",
         type: "risk-high",
       },
       {
-        title: "Konversioprosentti laski 2,64 % → 2,57 %",
-        body: "Sessiot kasvoivat 17,6 %, mutta orgaaninen kasvu tuo enemmän tiedonhakijoita kuin ostajia. Seurattava ensi kuussa.",
+        title: "Conversion rate dropped 2.64% → 2.57%",
+        body: "Sessions grew +17.6% but organic growth brings more browsers than buyers. Monitor next month before acting.",
         type: "risk-low",
       },
       {
-        title: "Segmentoitu sähköposti ylituotti massakampanjan 2,2×",
-        body: "\"Vaelluskengät – ostajat\" (12 400 tilaajaa) teki €11 400 vs. \"Kevätalennus – kaikki\" (181 000 tilaajaa) teki €5 200.",
+        title: "Segmented email outperformed broadcast 2.2×",
+        body: '"Hiking Boots – Buyers" (12,400 subscribers) generated €11,400 vs. "Spring Sale – All" (181,000 subscribers) at €5,200.',
         type: "opportunity",
       },
     ],
@@ -150,34 +150,34 @@ function buildDemoReport(demo: boolean): ReportData {
       {
         name: "Google Analytics 4",
         icon: "📊",
-        verdict: "Orgaaninen liikenne +26 % — SEO-investoinnit alkavat tuottaa.",
+        verdict: "Organic traffic +26% — SEO investments are starting to pay off.",
         verdict_positive: true,
-        body: "Sessiot kasvoivat 41 100:sta 48 320:een (+17,6 %) ja liikevaihto nousi €159 200:sta €187 450:een (+17,7 %). Orgaanisen liikenteen osuus nousi 43 %:sta 46 %:iin. Sähköpostikanava tuotti parhaan tehokkuuden: €3,64/sessio vs. maksetun haun €4,81.",
-        note: "Konversioprosentti laski 2,64 % → 2,57 % vaikka sessiot kasvoivat. Seuraa kehitystä /vaelluskengat-sivulla.",
+        body: "Sessions grew from 41,100 to 48,320 (+17.6%) and revenue rose from €159,200 to €187,450 (+17.7%). Organic share increased from 43% to 46%. Email was the most efficient channel at €3.64/session vs. paid search at €4.81.",
+        note: "Conversion rate slipped from 2.64% to 2.57% despite session growth. Monitor the /hiking-boots landing page closely.",
       },
       {
         name: "Google Ads",
         icon: "🎯",
-        verdict: "Paras ROAS-kuukausi sitten Q4 2024: 5,92× — CPC laski ja konversiot kasvoivat.",
+        verdict: "Best ROAS month since Q4 2024: 5.92× — CPC fell and conversions grew.",
         verdict_positive: true,
-        body: "Kulutus +20 % (€9 840), tuotto +31,9 % (€58 200), ROAS 5,38 → 5,92. CPC laski €0,74 → €0,69. Brand-kampanja ROAS 14,2 €1 200 kulutuksella.",
-        note: "Retargeting-kampanjan ROAS 3,9 on heikoin — tarkista päällekkäisyydet Brand-kampanjan kanssa.",
+        body: "Spend +20% (€9,840), revenue +31.9% (€58,200), ROAS improved from 5.38 to 5.92. CPC dropped from €0.74 to €0.69. Brand campaign delivered ROAS 14.2 on €1,200 spend.",
+        note: "Retargeting campaign ROAS 3.9 is the weakest — check for audience overlap with the Brand campaign.",
       },
       {
         name: "Meta Ads",
         icon: "📱",
-        verdict: "Kokonais-ROAS parani 3,96 → 4,71, mutta Interest-setti vaatii välitöntä toimenpidettä.",
+        verdict: "Overall ROAS improved 3.96 → 4.71, but the Interest ad set needs immediate action.",
         verdict_positive: false,
-        body: "Kulutus laski €4 600 → €4 120 (−10 %) kun heikkoja settejä sammutettiin. Retargeting ROAS 7,8, Lookalike 6,2. Interest-setti kuluttaa €1 540 ROAS 2,1:llä — sama budjetti Retargetingissä tuottaisi ~€12 000.",
-        note: "Siirrä Interest-setin budjetti välittömästi Lookalike 1 % -kohderyhmälle.",
+        body: "Spend dropped from €4,600 to €4,120 (−10%) as underperforming ad sets were paused. Retargeting ROAS 7.8, Lookalike 6.2. Interest set burns €1,540 at ROAS 2.1 — the same budget in Retargeting would produce ~€12,000.",
+        note: "Pause the Interest ad set immediately and move the budget to the Lookalike 1% audience.",
       },
       {
         name: "Klaviyo",
         icon: "✉️",
-        verdict: "Sähköpostituotto +31,5 % MoM — segmentointi todistaa arvonsa ylivoimaisesti.",
+        verdict: "Email revenue +31.5% MoM — segmentation proves its value decisively.",
         verdict_positive: true,
-        body: "Kokonaistuotto €21 600 → €28 400. Avausprosentti 26,1 % → 28,4 %, klikkiprosentti 3,8 % → 4,2 %. Segmentoitu kampanja (12 400 tilaajaa, OR 41,8 %) teki €11 400 — massakampanja (181 000 tilaajaa) teki vain €5 200.",
-        note: "Win-back avausprosentti 19,4 % on listan heikoin. Kokeile 90 pv lapsuneisuusrajaa 180 pv sijaan.",
+        body: "Total revenue €21,600 → €28,400. Open rate 26.1% → 28.4%, click rate 3.8% → 4.2%. Segmented campaign (12,400 subscribers, OR 41.8%) generated €11,400 — the broadcast to 181,000 subscribers produced only €5,200.",
+        note: "Win-back open rate 19.4% is the list's weakest. Test a 90-day inactivity threshold instead of 180 days.",
       },
     ],
   };
@@ -187,7 +187,7 @@ function buildDemoReport(demo: boolean): ReportData {
 // Claude calls (live mode)
 // ---------------------------------------------------------------------------
 
-const SYSTEM = `You are Pohjoinen's senior marketing analyst. Write in Finnish. Lead with verdict then evidence. Flag anomalies immediately. No filler. Numbers must match data exactly.`;
+const SYSTEM = `You are Pohjoinen's senior marketing analyst. Write in English. Lead with verdict then evidence. Flag anomalies immediately. No filler. Numbers must match data exactly.`;
 
 async function callClaude(client: Anthropic, prompt: string): Promise<string> {
   const msg = await client.messages.create({
@@ -209,41 +209,41 @@ async function buildLiveReport(): Promise<ReportData> {
   const pct = (a: number, b: number) => `${(((a - b) / b) * 100).toFixed(1)}%`;
 
   const [ga4Body, gadsBody, metaBody, klaviyoBody] = await Promise.all([
-    callClaude(client, `GA4 data: ${JSON.stringify(d.ga4)}. Write 2-3 sentences of analysis with specific numbers. No heading.`),
-    callClaude(client, `Google Ads data: ${JSON.stringify(d.google_ads)}. Write 2-3 sentences of analysis with specific numbers. No heading.`),
-    callClaude(client, `Meta Ads data: ${JSON.stringify(d.meta_ads)}. Write 2-3 sentences of analysis with specific numbers. No heading.`),
-    callClaude(client, `Klaviyo data: ${JSON.stringify(d.klaviyo)}. Write 2-3 sentences of analysis with specific numbers. No heading.`),
+    callClaude(client, `GA4 data: ${JSON.stringify(d.ga4)}. Write 2-3 sentences of analysis in English with specific numbers. No heading.`),
+    callClaude(client, `Google Ads data: ${JSON.stringify(d.google_ads)}. Write 2-3 sentences of analysis in English with specific numbers. No heading.`),
+    callClaude(client, `Meta Ads data: ${JSON.stringify(d.meta_ads)}. Write 2-3 sentences of analysis in English with specific numbers. No heading.`),
+    callClaude(client, `Klaviyo data: ${JSON.stringify(d.klaviyo)}. Write 2-3 sentences of analysis in English with specific numbers. No heading.`),
   ]);
 
   const ceoRaw = await callClaude(client,
-    `Write exactly 3 Finnish sentences as CEO summary. Revenue €${d.ga4.revenue}, paid spend €${totalSpend}, email €${d.klaviyo.revenue_attributed}. Sentence 1: headline number and driver. Sentence 2: biggest risk. Sentence 3: single priority for next month. Output only the 3 sentences, nothing else.`
+    `Write exactly 3 English sentences as CEO summary. Revenue €${d.ga4.revenue}, paid spend €${totalSpend}, email €${d.klaviyo.revenue_attributed}. Sentence 1: headline number and driver. Sentence 2: biggest risk. Sentence 3: single priority for next month. Output only the 3 sentences, nothing else.`
   );
 
   return {
     period: d.period,
     prev_period: d.prev_period,
-    generated_at: new Date().toLocaleString("fi-FI", { timeZone: "Europe/Helsinki" }),
+    generated_at: new Date().toLocaleString("en-GB", { timeZone: "Europe/Helsinki" }),
     demo: false,
     ceo_summary: ceoRaw,
-    ceo_priority: "Siirrä Meta Interest -budjetti (€1 540) Lookalike 1 % -kohderyhmälle ja käynnistä Juoksukenkä-sähköpostiflow ostajasegmentille.",
+    ceo_priority: "Reallocate Meta Interest budget (€1,540) to the Lookalike 1% audience and launch a Running Shoes post-purchase email flow for buyers.",
     metrics: [
-      { label: "Liikevaihto", value: "€187 450", prev: "€159 200", change: `+${pct(d.ga4.revenue, d.ga4.revenue_prev)}`, direction: "up", positive: true },
-      { label: "Sessiot", value: "48 320", prev: "41 100", change: `+${pct(d.ga4.sessions, d.ga4.sessions_prev)}`, direction: "up", positive: true },
-      { label: "Maksettu media", value: `€${totalSpend.toLocaleString("fi-FI")}`, prev: `€${prevSpend.toLocaleString("fi-FI")}`, change: `+${pct(totalSpend, prevSpend)}`, direction: "up", positive: false },
+      { label: "Revenue", value: "€187,450", prev: "€159,200", change: `+${pct(d.ga4.revenue, d.ga4.revenue_prev)}`, direction: "up", positive: true },
+      { label: "Sessions", value: "48,320", prev: "41,100", change: `+${pct(d.ga4.sessions, d.ga4.sessions_prev)}`, direction: "up", positive: true },
+      { label: "Paid media spend", value: `€${totalSpend.toLocaleString("en-GB")}`, prev: `€${prevSpend.toLocaleString("en-GB")}`, change: `+${pct(totalSpend, prevSpend)}`, direction: "up", positive: false },
       { label: "Blended ROAS", value: `${(d.ga4.revenue / totalSpend).toFixed(2)}x`, prev: "—", change: "", direction: "neutral", positive: true },
-      { label: "Sähköpostituotto", value: "€28 400", prev: "€21 600", change: `+${pct(d.klaviyo.revenue_attributed, d.klaviyo.revenue_attributed_prev)}`, direction: "up", positive: true },
-      { label: "Konversioprosentti", value: "2,57 %", prev: "2,64 %", change: "−0,07 pp", direction: "down", positive: false },
+      { label: "Email revenue", value: "€28,400", prev: "€21,600", change: `+${pct(d.klaviyo.revenue_attributed, d.klaviyo.revenue_attributed_prev)}`, direction: "up", positive: true },
+      { label: "Conversion rate", value: "2.57%", prev: "2.64%", change: "−0.07 pp", direction: "down", positive: false },
     ],
     anomalies: [
-      { title: "Meta Interest -kohderyhmä ROAS 2,1", body: "€1 540 kulutuksella tuotettu €3 234 — budjetti Retargetingiin tuottaisi ~€12 000.", type: "risk-high" },
-      { title: "Konversioprosentti laski", body: "2,64 % → 2,57 % vaikka sessiot +17,6 %. Orgaaninen kasvu tuo tiedonhakijoita.", type: "risk-low" },
-      { title: "Segmentointi ylituotti massakampanjan 2,2×", body: "12 400 tilaajaa → €11 400 vs. 181 000 tilaajaa → €5 200.", type: "opportunity" },
+      { title: "Meta Interest audience ROAS 2.1", body: "€1,540 spend yielded only €3,234 — move budget to Retargeting for ~€12,000 return.", type: "risk-high" },
+      { title: "Conversion rate declined", body: "2.64% → 2.57% despite sessions +17.6%. Organic growth brings more browsers than buyers.", type: "risk-low" },
+      { title: "Segmented email outperformed broadcast 2.2×", body: "12,400 subscribers → €11,400 vs. 181,000 subscribers → €5,200.", type: "opportunity" },
     ],
     channels: [
-      { name: "Google Analytics 4", icon: "📊", verdict: "Orgaaninen liikenne +26 % — SEO-investoinnit alkavat tuottaa.", verdict_positive: true, body: ga4Body, note: "Konversioprosentti laski — seuraa /vaelluskengat-sivua." },
-      { name: "Google Ads", icon: "🎯", verdict: "ROAS 5,92× — paras kuukausi sitten Q4 2024.", verdict_positive: true, body: gadsBody, note: "Retargeting ROAS 3,9 — tarkista päällekkäisyydet Brand-kampanjan kanssa." },
-      { name: "Meta Ads", icon: "📱", verdict: "ROAS parani 3,96 → 4,71, mutta Interest-setti vaatii toimenpidettä.", verdict_positive: false, body: metaBody, note: "Siirrä Interest-budjetti välittömästi Lookalike 1 % -kohderyhmälle." },
-      { name: "Klaviyo", icon: "✉️", verdict: "Sähköpostituotto +31,5 % — segmentointi todistaa arvonsa.", verdict_positive: true, body: klaviyoBody, note: "Win-back OR 19,4 % on heikoin — kokeile 90 pv lapsuneisuusrajaa." },
+      { name: "Google Analytics 4", icon: "📊", verdict: "Organic traffic +26% — SEO investments are paying off.", verdict_positive: true, body: ga4Body, note: "Conversion rate slipped — monitor the /hiking-boots landing page." },
+      { name: "Google Ads", icon: "🎯", verdict: "ROAS 5.92× — best month since Q4 2024.", verdict_positive: true, body: gadsBody, note: "Retargeting ROAS 3.9 — check for audience overlap with Brand campaign." },
+      { name: "Meta Ads", icon: "📱", verdict: "ROAS improved 3.96 → 4.71, but Interest ad set needs immediate action.", verdict_positive: false, body: metaBody, note: "Pause Interest ad set immediately and move budget to Lookalike 1%." },
+      { name: "Klaviyo", icon: "✉️", verdict: "Email revenue +31.5% — segmentation proves its value.", verdict_positive: true, body: klaviyoBody, note: "Win-back OR 19.4% is the list's weakest — test a 90-day inactivity window." },
     ],
   };
 }
