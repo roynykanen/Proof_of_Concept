@@ -5,25 +5,19 @@
 
 ---
 
-## What it does
+## What I built
 
-An AI agent that pulls data from GA4, Google Ads, Meta Ads Manager, and Klaviyo, then uses Claude to write:
+A Python agent (`run_report.py`) that pulls GA4, Google Ads, Meta Ads, and Klaviyo data, then makes 5 sequential calls to Claude to produce a structured monthly report: channel-by-channel verdicts with specific numbers, an automated anomaly scan, and a 3-sentence CEO executive summary with one concrete action for next month.
 
-- A channel-by-channel performance analysis with verdict + anomaly flag
-- An automated anomaly scan across all channels
-- A 3-sentence CEO-level executive summary with one clear priority for next month
+The AI is the core. Claude is not generating boilerplate — it is reading the actual numbers and forming opinions: which campaign is underperforming, where to move budget, what the single priority is. Mock data mode means it runs end-to-end immediately with just an `ANTHROPIC_API_KEY`. Real API connectors are drop-in replacements in `mock_data.py`. GitHub Actions runs the cron on the 1st of each month and pings Slack when the draft is ready — zero infrastructure, no servers.
 
-Output is a formatted Markdown report. A Next.js web UI lets you generate and view the report in the browser — deployable to Vercel in one click.
-
-**See [`sample_report.md`](sample_report.md) for exactly what it produces.**
+**See [`sample_report.md`](sample_report.md) for exactly what it outputs.**
 
 ---
 
 ## Why this opportunity
 
 Hanna spends 2 days per month copying numbers into slides. That is 24 days a year of mechanical work — and the 2-day lag means the data is stale before Arttu sees it. This tool cuts generation time to ~3 minutes and makes mid-month reports possible.
-
-Claude is not just writing code here — it is reading the numbers and forming opinions: which channel underperformed, which anomaly needs attention, what the single priority for next month should be. That is the core value.
 
 ---
 
@@ -32,11 +26,11 @@ Claude is not just writing code here — it is reading the numbers and forming o
 | Tool | Role |
 |------|------|
 | **Claude API** | Commentary generation, anomaly detection, CEO narrative |
-| **Python 3.12** | CLI script, data orchestration |
-| **Next.js 14** | Web UI with streaming progress |
+| **Python 3.12** | CLI agent, data orchestration |
+| **Next.js 14** | Web UI with streaming progress and channel logos |
 | **Vercel** | One-click deploy for the UI |
-| **GitHub Actions** | Monthly cron scheduler (optional) |
-| **Slack Webhooks** | Notification when report is ready (optional) |
+| **GitHub Actions** | Monthly cron scheduler — runs on the 1st, no servers needed |
+| **Slack Webhooks** | Posts the report summary to a channel when the draft is ready |
 
 ---
 
@@ -79,6 +73,31 @@ Toggle **Demo mode** off and add your `ANTHROPIC_API_KEY` to use live Claude cal
 
 ---
 
+## Send the report to Slack
+
+The web UI has a **Send to Slack** button at the bottom of every generated report. It posts a formatted Block Kit message with the executive summary, key metrics, priority, and anomalies.
+
+**How to set it up:**
+
+1. Go to [api.slack.com/apps](https://api.slack.com/apps) → Create New App → From scratch
+2. Add the **Incoming Webhooks** feature and activate it
+3. Click **Add New Webhook to Workspace**, choose the channel, and copy the webhook URL (`https://hooks.slack.com/services/...`)
+4. Paste the URL into the **Send to Slack** input in the UI and click **Send**
+
+**To skip pasting the URL every time (Vercel):**
+
+Add `SLACK_WEBHOOK_URL` as an environment variable in Vercel project settings → Environment Variables, then redeploy. The input field will disappear and the Send button will use the server-side webhook automatically.
+
+**CLI / GitHub Actions:**
+
+```bash
+export SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+python run_report.py --output report.md
+# the script pings Slack automatically when the report is saved
+```
+
+---
+
 ## Project structure
 
 ```
@@ -91,8 +110,9 @@ Toggle **Demo mode** off and add your `ANTHROPIC_API_KEY` to use live Claude cal
 │   └── prompts.py                 # Claude prompt templates
 └── ui/
     ├── app/
-    │   ├── page.tsx               # Web UI
-    │   └── api/report/route.ts    # Streaming API route (calls Claude)
+    │   ├── page.tsx               # Web UI with brand logos and English UI
+    │   ├── api/report/route.ts    # Streaming API route (calls Claude)
+    │   └── api/slack/route.ts     # Slack webhook proxy
     ├── package.json
     └── next.config.js
 ```
